@@ -1,0 +1,452 @@
+Register.jsp
+
+-------------------
+
+<html>
+
+<head>
+
+<link rel="stylesheet" href="./mystyle.css"></link>
+
+</head>
+
+<body>
+
+<div>
+
+<h1>Railway Crossing</h1>
+
+<p>User Register</p>
+
+<form action="Validate.jsp">
+
+Enter Name <br/>
+
+<input type="text" placeholder="john peterson" name="name"/><br/><br/>
+
+Enter Email <br/>
+
+<input type="email" placeholder="abc@example.com" name="email"/><br/><br/>
+
+Enter password <br/>
+
+<input type="password" placeholder="********" name="pass"/><br/><br/>
+
+<button type="submit">Register</button>
+
+</form>
+
+</div>
+
+</body>
+
+</html>
+
+
+
+mystyle.css
+
+------------------
+
+div{
+
+text-align:center;
+
+}
+
+button{
+
+background-color:green;
+
+color:white;
+
+width:200px;
+
+height:50px;
+
+border-radius:50px;
+
+}
+
+input{
+
+border-radius:50px;
+
+
+
+height:25px;
+
+}
+
+
+
+RegisterBean.jsp
+
+--------------------------
+
+package com.railway.bean;
+
+
+
+public class RegisterBean {
+
+private String name;
+
+private String email;
+
+private String password;
+
+public String getName() {
+
+return name;
+
+}
+
+public void setName(String name) {
+
+this.name = name;
+
+}
+
+public String getEmail() {
+
+return email;
+
+}
+
+public void setEmail(String email) {
+
+this.email = email;
+
+}
+
+public String getPassword() {
+
+return password;
+
+}
+
+public void setPassword(String password) {
+
+this.password = password;
+
+}
+
+
+
+}
+
+Vaildate.jsp
+
+------------------
+
+<%@page import="com.railway.dao.RailwayCrossingDao"%>
+
+<%@page import="com.railway.bean.RegisterBean"%>
+
+<html>
+
+<body>
+
+<%String name=request.getParameter("name");
+
+String email=request.getParameter("email");
+
+String password=request.getParameter("pass");
+
+RegisterBean rb=new RegisterBean();
+
+rb.setName(name);
+
+rb.setEmail(email);
+
+rb.setPassword(password);
+
+if(RailwayCrossingDao.register(rb).equals("SUCCESS"))
+
+{%>
+
+	<jsp:forward page="Login.jsp"/>
+
+<%}
+
+else{%>
+
+<jsp:forward page="Register.jsp"/>
+
+<%} %>
+
+
+
+</body>
+
+</html>
+
+RailwayCrossingDao.java
+
+---------------------------------------
+
+package com.railway.dao;
+
+import java.sql.*;
+
+
+
+import com.railway.bean.RegisterBean;
+
+public class RailwayCrossingDao {
+
+public static Connection con=getCon();
+
+public static PreparedStatement ps;
+
+public static ResultSet rs;
+
+public static Connection getCon()
+
+{
+
+try
+
+	{
+
+ Class.forName("com.mysql.cj.jdbc.Driver");
+
+con=DriverManager.getConnection("jdbc:mysql://localhost:3306/project","root","root");
+
+
+
+}
+
+catch(ClassNotFoundException cnf)
+
+{
+
+
+
+}
+
+catch(SQLException sql)
+
+{
+
+
+
+}
+
+return con;
+
+}
+
+public static String register(RegisterBean rb)
+
+{
+
+int i=0;
+
+try
+
+	{
+
+ ps=con.prepareStatement("insert into register values(?,?,?)");
+
+ps.setString(1,rb.getName());
+
+ps.setString(2, rb.getEmail());
+
+ps.setString(3, rb.getPassword());
+
+i=ps.executeUpdate();
+
+if(i==1)
+
+{
+
+return "SUCCESS";
+
+}
+
+else
+
+ {
+
+ return "FAIL";
+
+}
+
+}
+
+catch(SQLException sql)
+
+{
+
+
+
+}
+
+return null;
+
+}
+
+public static String checkLogin(String email,String pass)
+
+{
+
+try
+
+	{
+
+ ps=con.prepareStatement("select * from register where email=? and password=?");
+
+ps.setString(1, email);
+
+ps.setString(2, pass);
+
+rs=ps.executeQuery();
+
+if(rs.next())
+
+{
+
+return "Valid";
+
+}
+
+else
+
+ {
+
+ return "Invalid";
+
+}
+
+}
+
+catch(SQLException sql)
+
+{
+
+
+
+}
+
+return null;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+}
+
+
+
+Login.jsp
+
+---------------
+
+<html>
+
+<head>
+
+<link rel="stylesheet" href="./mystyle.css"></link>
+
+</head>
+
+<body>
+
+<div>
+
+<h1>Railway Crossing</h1>
+
+<p>User Login</p>
+
+<form action="CheckLogin.jsp">
+
+Enter Email <br/>
+
+<input type="email" placeholder="abc@example.com" name="email"/><br/><br/>
+
+Enter password <br/>
+
+<input type="password" placeholder="********" name="pass"/><br/><br/>
+
+<button type="submit">Login</button>
+
+</form>
+
+</div>
+
+</body>
+
+</html>
+
+
+
+CheckLogin.jsp
+
+------------------------
+
+<%@page import="com.railway.dao.RailwayCrossingDao"%>
+
+<html>
+
+<body>
+
+<%String email=request.getParameter("email");
+
+String pass=request.getParameter("pass");
+
+if(RailwayCrossingDao.checkLogin(email, pass).equals("Valid"))
+
+{
+
+%>
+
+<jsp:forward page="UserHome.jsp"/>
+
+<%} else{%>
+
+<jsp:forward page="Login.jsp"/>
+
+<%} %>
+
+</body>
+
+</html>
+
+
+
+UserHome.jsp
+
+---------------------
+
+<html>
+
+<body>
+
+<h1>User Home Page</h1>
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+create table register(name varchar(20),email varchar(20),password varchar(20));
+
+create table railwaycrossing(Name varchar(20),address varchar(20),
+landmark varchar(20),trainschedules varchar(20),personincharge varchar(20),
+status varchar(20) default 'Closed');
+

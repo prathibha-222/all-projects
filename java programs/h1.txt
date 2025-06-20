@@ -1,0 +1,241 @@
+2. Hibernate Configuration (hibernate.cfg.xml)
+Defines connection details and Hibernate settings.
+
+xml
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/productdb</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password">Password@12</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        <mapping resource="product.hbm.xml"/>
+    </session-factory>
+</hibernate-configuration>
+3. Hibernate Utility Class (HibernateUtil.java)
+Provides session factory management.
+
+java
+package com.mphasis.dbutil;
+
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+
+public class HibernateUtil {
+    private static final SessionFactory sessionFactory = buildSessionFactory();
+
+    private static SessionFactory buildSessionFactory() {
+        try {
+            return new Configuration().configure().buildSessionFactory();
+        } catch (Throwable ex) {
+            System.err.println("SessionFactory creation failed: " + ex);
+            throw new ExceptionInInitializerError(ex);
+        }
+    }
+
+    public static SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+
+    public static void shutdown() {
+        getSessionFactory().close();
+    }
+}
+4. Product Entity Class (Product.java)
+Defines the persistent class.
+
+java
+package com.mphasis.domain;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "product")
+public class Product {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "product_id")
+    private int productId;
+
+    @Column(name = "product_name")
+    private String productName;
+
+    @Column(name = "product_price")
+    private double productPrice;
+
+    public Product() {}
+
+    public Product(String productName, double productPrice) {
+        this.productName = productName;
+        this.productPrice = productPrice;
+    }
+
+    public int getProductId() { return productId; }
+    public String getProductName() { return productName; }
+    public double getProductPrice() { return productPrice; }
+
+    public void setProductName(String productName) { this.productName = productName; }
+    public void setProductPrice(double productPrice) { this.productPrice = productPrice; }
+
+    @Override
+    public String toString() {
+        return "Product ID: " + productId + ", Name: " + productName + ", Price: " + productPrice;
+    }
+}
+5. Hibernate Mapping (product.hbm.xml)
+Maps the Product entity to the product table.
+
+xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.mphasis.domain.Product" table="product">
+        <id column="product_id" name="productId" type="int">
+            <generator class="native"/>
+        </id>
+        <property column="product_name" name="productName" type="string"/>
+        <property column="product_price" name="productPrice" type="double"/>
+    </class>
+</hibernate-mapping>
+6. Product DAO Class (ProductManagementDAO.java)
+Handles database interactions.
+
+java
+package com.mphasis.dao;
+
+import com.mphasis.dbutil.HibernateUtil;
+import com.mphasis.domain.Product;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
+import java.util.List;
+
+public class ProductManagementDAO {
+
+    public void addProduct(Product product) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = session.beginTransaction();
+        session.save(product);
+        tx.commit();
+        session.close();
+        System.out.println("Product added successfully.");
+    }
+
+    public List<Product> viewProducts() {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        List<Product> products = session.createQuery("FROM Product", Product.class).list();
+        session.close();
+        return products;
+    }
+
+    public void updateProduct(int productId, String newName, double newPrice) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = session.beginTransaction();
+        Product product = session.get(Product.class, productId);
+        if (product != null) {
+            product.setProductName(newName);
+            product.setProductPrice(newPrice);
+            session.update(product);
+            tx.commit();
+            System.out.println("Product updated successfully.");
+        } else {
+            System.out.println("Product not found.");
+        }
+        session.close();
+    }
+
+    public void deleteProduct(int productId) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = session.beginTransaction();
+        Product product = session.get(Product.class, productId);
+        if (product != null) {
+            session.delete(product);
+            tx.commit();
+            System.out.println("Product deleted successfully.");
+        } else {
+            System.out.println("Product not found.");
+        }
+        session.close();
+    }
+
+    public Product searchProduct(int productId) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Product product = session.get(Product.class, productId);
+        session.close();
+        return product;
+    }
+}
+7. Main Application (ProductManagementApp.java)
+Handles user input and executes operations.
+
+java
+package com.mphasis.app;
+
+import com.mphasis.dao.ProductManagementDAO;
+import com.mphasis.domain.Product;
+
+import java.util.Scanner;
+
+public class ProductManagementApp {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        ProductManagementDAO dao = new ProductManagementDAO();
+
+        while (true) {
+            System.out.println("\nProduct Management Options:");
+            System.out.println("A. View Products");
+            System.out.println("B. Add Product");
+            System.out.println("C. Update Product");
+            System.out.println("D. Delete Product");
+            System.out.println("E. Search Product");
+            System.out.println("F. Exit");
+            System.out.print("Enter your choice: ");
+            char choice = scanner.next().toUpperCase().charAt(0);
+
+            switch (choice) {
+                case 'A':
+                    dao.viewProducts().forEach(System.out::println);
+                    break;
+                case 'B':
+                    System.out.print("Enter product name: ");
+                    String name = scanner.next();
+                    System.out.print("Enter product price: ");
+                    double price = scanner.nextDouble();
+                    dao.addProduct(new Product(name, price));
+                    break;
+                case 'C':
+                    System.out.print("Enter product ID to update: ");
+                    int updateId = scanner.nextInt();
+                    System.out.print("Enter new product name: ");
+                    String newName = scanner.next();
+                    System.out.print("Enter new product price: ");
+                    double newPrice = scanner.nextDouble();
+                    dao.updateProduct(updateId, newName, newPrice);
+                    break;
+                case 'D':
+                    System.out.print("Enter product ID to delete: ");
+                    int deleteId = scanner.nextInt();
+                    dao.deleteProduct(deleteId);
+                    break;
+                case 'E':
+                    System.out.print("Enter product ID to search: ");
+                    int searchId = scanner.nextInt();
+                    System.out.println(dao.searchProduct(searchId));
+                    break;
+                case 'F':
+                    System.out.println("Exiting...");
+                    scanner.close();
+                    return;
+                default:
+                    System.out.println("Invalid choice. Try again.");
+            }
+        }
+    }
+}

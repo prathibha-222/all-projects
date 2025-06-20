@@ -1,0 +1,109 @@
+Palindrome Checker
+javascript
+function isPalindrome(str) {
+  const cleanStr = str.replace(/[^a-z0-9]/gi, '').toLowerCase();
+  return cleanStr === cleanStr.split('').reverse().join('');
+}
+
+// Example
+console.log(isPalindrome("Madam")); // true
+✅ 2. Fibonacci Series Generator
+javascript
+function generateFibonacci(n) {
+  const fib = [0, 1];
+  for (let i = 2; i < n; i++) {
+    fib[i] = fib[i-1] + fib[i-2];
+  }
+  return fib;
+}
+
+// Example
+console.log(generateFibonacci(10));
+✅ 3. Prime Number Check
+javascript
+function isPrime(num) {
+  if (num <= 1) return false;
+  for (let i = 2; i <= Math.sqrt(num); i++) {
+    if (num % i === 0) return false;
+  }
+  return true;
+}
+
+// Example
+console.log(isPrime(17)); // true
+✅ 4. Factorial Using Recursion
+javascript
+function factorial(n) {
+  return n <= 1 ? 1 : n * factorial(n - 1);
+}
+
+console.log(factorial(5)); // 120
+✅ 5. Find Largest Number in Array
+javascript
+function findLargest(arr) {
+  return Math.max(...arr);
+}
+
+console.log(findLargest([3, 6, 2, 8, 4])); // 8
+
+
+
+Check for Anagram
+javascript
+function isAnagram(str1, str2) {
+  const format = s => s.replace(/\s/g, '').toLowerCase().split('').sort().join('');
+  return format(str1) === format(str2);
+}
+
+// Example
+console.log(isAnagram("listen", "silent")); // true
+✅ 7. Count Vowels in a String
+javascript
+function countVowels(str) {
+  return (str.match(/[aeiou]/gi) || []).length;
+}
+
+// Example
+console.log(countVowels("JavaScript")); // 3
+✅ 8. Reverse Words in a Sentence
+javascript
+function reverseWords(sentence) {
+  return sentence.split(' ').map(word => word.split('').reverse().join('')).join(' ');
+}
+
+// Example
+console.log(reverseWords("Hello World")); // "olleH dlroW"
+✅ 9. Flatten a Nested Array
+javascript
+function flattenArray(arr) {
+  return arr.reduce((flat, toFlatten) => 
+    flat.concat(Array.isArray(toFlatten) ? flattenArray(toFlatten) : toFlatten), []);
+}
+
+// Example
+console.log(flattenArray([1, [2, [3, 4]], 5])); // [1, 2, 3, 4, 5]
+✅ 10. Remove Duplicates from an Array
+javascript
+function removeDuplicates(arr) {
+  return [...new Set(arr)];
+}
+
+// Example
+console.log(removeDuplicates([1, 2, 2, 3, 4, 4, 5])); // [1, 2, 3, 4, 5]
+✅ 11. Validate a Balanced Brackets Expression
+javascript
+function isBalanced(str) {
+  const stack = [];
+  const map = { ')': '(', ']': '[', '}': '{' };
+  for (let char of str) {
+    if (['(', '[', '{'].includes(char)) {
+      stack.push(char);
+    } else if ([')', ']', '}'].includes(char)) {
+      if (stack.pop() !== map[char]) return false;
+    }
+  }
+  return stack.length === 0;
+}
+
+// Example
+console.log(isBalanced("{[()]}")); // true

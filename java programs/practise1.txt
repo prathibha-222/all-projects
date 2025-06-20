@@ -1,0 +1,197 @@
+1. Database Setup (MySQL)
+Create a database named login_system and a table to store users.
+
+sql
+CREATE DATABASE login_system;
+
+USE login_system;
+
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(255) UNIQUE,
+    password VARCHAR(255)
+);
+2. Model Class (User.java)
+This class holds the user credentials.
+
+java
+public class User {
+    private String username;
+    private String password;
+
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+}
+3. Business Exception (BusinessException.java)
+Custom exception for validation failures.
+
+java
+public class BusinessException extends Exception {
+    public BusinessException(String message) {
+        super(message);
+    }
+}
+4. Business Logic (LoginBO.java)
+Validates the username and password format.
+
+java
+public class LoginBO {
+    public void validate(User user) throws BusinessException {
+        if (user.getUsername() == null || user.getUsername().isEmpty()) {
+            throw new BusinessException("Username cannot be empty");
+        }
+        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            throw new BusinessException("Password cannot be empty");
+        }
+    }
+}
+5. Data Access (LoginDAO.java)
+Checks the username and password combination in the database.
+
+java
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+public class LoginDAO {
+    public boolean isValidUser(User user) throws BusinessException {
+        try {
+            Connection con = DatabaseConnection.initializeDatabase();
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM users WHERE username = ? AND password = ?");
+            ps.setString(1, user.getUsername());
+            ps.setString(2, user.getPassword());
+            ResultSet rs = ps.executeQuery();
+            
+            return rs.next();
+        } catch (Exception e) {
+            throw new BusinessException("Database error occurred");
+        }
+    }
+}
+6. Database Connection (DatabaseConnection.java)
+Initializes the database connection.
+
+java
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class DatabaseConnection {
+    public static Connection initializeDatabase() throws SQLException, ClassNotFoundException {
+        String url = "jdbc:mysql://localhost:3306/login_system"; 
+        String user = "root"; 
+        String password = "password"; 
+
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        return DriverManager.getConnection(url, user, password);
+    }
+}
+7. Login Servlet (LoginServlet.java)
+Handles login request and session management.
+
+java
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+@WebServlet("/login")
+public class LoginServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+
+        User user = new User(username, password);
+        LoginBO loginBO = new LoginBO();
+        LoginDAO loginDAO = new LoginDAO();
+
+        try {
+            loginBO.validate(user);
+            boolean isValid = loginDAO.isValidUser(user);
+
+            if (isValid) {
+                HttpSession session = request.getSession();
+                session.setAttribute("username", username);
+                response.sendRedirect("welcome.html");
+            } else {
+                response.sendRedirect("login.html?error=Invalid Username/Password");
+            }
+        } catch (BusinessException e) {
+            response.getWriter().println(e.getMessage());
+        }
+    }
+}
+8. Logoff Servlet (LogoffServlet.java)
+Destroys the session and redirects to login.
+
+java
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+@WebServlet("/logoff")
+public class LogoffServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        response.sendRedirect("login.html");
+    }
+}
+9. Frontend: HTML Implementation
+Login Page (login.html)
+Allows users to enter credentials.
+
+html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+</head>
+<body>
+    <h2>Login</h2>
+    <form action="login" method="post">
+        Username: <input type="text" name="username" required /><br>
+        Password: <input type="password" name="password" required /><br>
+        <input type="submit" value="Login">
+    </form>
+    <p style="color:red">
+        <% if(request.getParameter("error") != null) { %>
+            Invalid Username/Password
+        <% } %>
+    </p>
+</body>
+</html>
+Welcome Page (welcome.html)
+Displays a successful login message and a logoff link.
+
+html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome</title>
+</head>
+<body>
+    <h2>Welcome, User!</h2>
+    <p>You have logged in successfully.</p>
+    <a href="logoff">Logoff</a>
+</body>
+</html>

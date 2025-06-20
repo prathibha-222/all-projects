@@ -1,0 +1,17 @@
+create schema project;
+use project;
+create table register(name varchar(20), email varchar(20), password(20));
+create table railwaycrossing(name varchar(20), address varchar(20), landmark varchar(20),trainschedules varchar(20), personincharge varchar(20), status varchar(20) default 'closed');
+
+
+open eclipse:
+dynamic web project
+Railway crossing project
+
+Register.jsp in webapp
+
+
+
+
+
+

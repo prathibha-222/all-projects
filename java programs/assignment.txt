@@ -1,0 +1,251 @@
+create an interface loan and declare interestRate(int amount) 
+ create a class SBIBank implements loan  , 
+create another class ICICIBank  implements loan 
+create a class Customer1 extends SBIBank ,
+main, 
+ Customer1 c1= new Customer1();
+c1.interestRate(100000);
+
+create a class Customer2 extends ICICIBank ,
+main, 
+ Customer2 c2= new Customer2();
+c2.interestRate(100000);
+
+
+
+
+
+import java.util.*;
+
+
+interface Loan {
+    void interestRate(int amount);
+}
+
+
+class SBIBank implements Loan {
+    @Override
+    public void interestRate(int amount) {
+        System.out.println("SBI Bank Interest on amount " + amount + " is " + (amount * 0.07) + " INR");
+    }
+}
+
+
+class ICICIBank implements Loan {
+    @Override
+    public void interestRate(int amount) {
+        System.out.println("ICICI Bank Interest on amount " + amount + " is " + (amount * 0.08) + " INR");
+    }
+}
+
+
+class Customer1 extends SBIBank {
+}
+
+
+class Customer2 extends ICICIBank {
+}
+
+
+public class BankLoanSystem {
+    public static void main(String[] args) {
+        
+        Customer1 c1 = new Customer1();
+        c1.interestRate(100000);
+
+        
+        Customer2 c2 = new Customer2();
+        c2.interestRate(100000);
+    }
+}
+
+
+
+
+
+Create an interface Loan and declare interestRate(int amount);
+
+
+
+Create a class SBIBank implements Loan
+
+
+
+Create another class ICICIBank implements Loan
+
+
+
+
+
+create a class Customer1 extends SBIBank
+
+
+
+main
+
+
+
+Customer1 c1=new Customer1();
+
+c1.interestRate(100000);
+
+
+
+
+
+Create another class Customer2 extends ICICIBank
+
+
+
+main 
+
+Customer2 c2=new Customer2();
+
+c2.interestRate(100000);
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+Create an interface VegFood
+
+public void curdRice();
+
+public void vegBiriyani();
+
+
+
+create an another interface NonVegFood
+
+public void chickenBiriyani();
+
+public void muttonBiriyani();
+
+
+
+abstract class Hotel implements VegFood,NonVegFood
+
+
+
+implements all method
+
+
+
+public void billDetails()
+
+{
+
+}
+
+
+
+
+
+class Customer extends Hotel
+
+
+
+public void display()
+
+{
+
+}
+
+main
+
+
+
+VegFood vf=new Customer();
+
+vf.curdRice();
+
+vf.vegBiriyani();
+
+
+
+NonVegFood nvf=new Customer();
+
+nvf.chickenBiriyani();
+
+nvf.muttonBiriyani();
+
+
+
+
+
+Hotel h=new Customer();
+
+h.curdRice();
+
+h.vegBiriyani();
+
+h.chickenBiriyani();
+
+h.muttonBiriyani();
+
+h.billDetails();
+
+
+
+Customer c=new Customer();
+
+c.curdRice();
+
+c.vegBiriyani();
+
+c.chickenBiriyani();
+
+c.muttonBiriyani();
+
+c.billDetails();
+
+c.display();
+
+
+
+
+Loan.java
+java
+// Loan.java - Defines the Loan interface
+public interface Loan {
+    void interestRate(int amount);
+}
+SBIBank.java
+java
+// SBIBank.java - Implements Loan interface
+public class SBIBank implements Loan {
+    @Override
+    public void interestRate(int amount) {
+        System.out.println("SBI Bank Interest on amount " + amount + " is " + (amount * 0.07) + " INR");
+    }
+}
+ICICIBank.java
+java
+// ICICIBank.java - Implements Loan interface
+public class ICICIBank implements Loan {
+    @Override
+    public void interestRate(int amount) {
+        System.out.println("ICICI Bank Interest on amount " + amount + " is " + (amount * 0.08) + " INR");
+    }
+}
+Customer1.java
+java
+// Customer1.java - Extends SBIBank
+public class Customer1 extends SBIBank {
+    public static void main(String[] args) {
+        Customer1 c1 = new Customer1();
+        c1.interestRate(100000);
+    }
+}
+Customer2.java
+java
+// Customer2.java - Extends ICICIBank
+public class Customer2 extends ICICIBank {
+    public static void main(String[] args) {
+        Customer2 c2 = new Customer2();
+        c2.interestRate(100000);
+    }
+}
+

@@ -1,0 +1,293 @@
+
+SECOND ONE
+
+Product Management Options:
+A. View Products
+B. Add Product
+C. Update Product
+D. Delete Product
+E. Search Product
+F. Exit
+Enter an option: A
+Jun 12, 2025 5:27:14 PM org.hibernate.Version logVersion
+INFO: HHH000412: Hibernate ORM core version 6.6.16.Final
+Jun 12, 2025 5:27:15 PM org.hibernate.cache.internal.RegionFactoryInitiator initiateService
+INFO: HHH000026: Second-level cache disabled
+Jun 12, 2025 5:27:15 PM org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl configure
+WARN: HHH10001002: Using built-in connection pool (not intended for production use)
+Jun 12, 2025 5:27:15 PM org.hibernate.engine.jdbc.dialect.internal.DialectFactoryImpl constructDialect
+WARN: HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+Jun 12, 2025 5:27:15 PM org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator logConnectionInfo
+INFO: HHH10001005: Database info:
+	Database JDBC URL [jdbc:mysql://localhost:3306/productdb]
+	Database driver: com.mysql.cj.jdbc.Driver
+	Database version: 8.0.37
+	Autocommit mode: false
+	Isolation level: undefined/unknown
+	Minimum pool size: 1
+	Maximum pool size: 20
+Jun 12, 2025 5:27:17 PM org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator initiateService
+INFO: HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+Jun 12, 2025 5:27:17 PM org.hibernate.resource.transaction.backend.jdbc.internal.DdlTransactionIsolatorNonJtaImpl getIsolatedConnection
+INFO: HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@78116659] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode.
+Hibernate: select p1_0.id,p1_0.name,p1_0.price from product p1_0
+Available Products:
+ID: P001, Name: Mobile, Price: 1000.0
+ID: P002, Name: Camera, Price: 999.0
+ID: P003, Name: Laptop, Price: 45000.0
+ID: P004, Name: TV, Price: 60000.0
+ID: P005, Name: Bottle, Price: 1500.0
+ID: P006, Name: Mouse, Price: 1000.0
+ID: P007, Name: Earphones, Price: 3000.0
+
+Product Management Options:
+A. View Products
+B. Add Product
+C. Update Product
+D. Delete Product
+E. Search Product
+F. Exit
+Enter an option: B
+Enter product id: P008
+Enter product name: Tablet
+Enter product price: 16000
+Hibernate: insert into product (name,price,id) values (?,?,?)
+Product added successfully.
+Hibernate: select p1_0.id,p1_0.name,p1_0.price from product p1_0
+Available Products:
+ID: P001, Name: Mobile, Price: 1000.0
+ID: P002, Name: Camera, Price: 999.0
+ID: P003, Name: Laptop, Price: 45000.0
+ID: P004, Name: TV, Price: 60000.0
+ID: P005, Name: Bottle, Price: 1500.0
+ID: P006, Name: Mouse, Price: 1000.0
+ID: P007, Name: Earphones, Price: 3000.0
+ID: P008, Name: Tablet, Price: 16000.0
+
+Product Management Options:
+A. View Products
+B. Add Product
+C. Update Product
+D. Delete Product
+E. Search Product
+F. Exit
+Enter an option: C
+Enter product ID: P006
+Enter new product name: Ipad
+Enter new product price: 35000
+Hibernate: select p1_0.id,p1_0.name,p1_0.price from product p1_0 where p1_0.id=?
+Hibernate: update product set name=?,price=? where id=?
+Product updated successfully.
+Hibernate: select p1_0.id,p1_0.name,p1_0.price from product p1_0
+Available Products:
+ID: P001, Name: Mobile, Price: 1000.0
+ID: P002, Name: Camera, Price: 999.0
+ID: P003, Name: Laptop, Price: 45000.0
+ID: P004, Name: TV, Price: 60000.0
+ID: P005, Name: Bottle, Price: 1500.0
+ID: P006, Name: Ipad, Price: 35000.0
+ID: P007, Name: Earphones, Price: 3000.0
+ID: P008, Name: Tablet, Price: 16000.0
+
+Product Management Options:
+A. View Products
+B. Add Product
+C. Update Product
+D. Delete Product
+E. Search Product
+F. Exit
+Enter an option: D
+Enter product ID: P005
+Hibernate: select p1_0.id,p1_0.name,p1_0.price from product p1_0 where p1_0.id=?
+Hibernate: delete from product where id=?
+Product deleted successfully.
+
+Product Management Options:
+A. View Products
+B. Add Product
+C. Update Product
+D. Delete Product
+E. Search Product
+F. Exit
+Enter an option: E
+Enter product ID: P006
+Hibernate: select p1_0.id,p1_0.name,p1_0.price from product p1_0 where p1_0.id=?
+Product ID: P006, Name: Ipad, Price: 35000.0
+
+Product Management Options:
+A. View Products
+B. Add Product
+C. Update Product
+D. Delete Product
+E. Search Product
+F. Exit
+Enter an option: E
+Enter product ID: P005
+Hibernate: select p1_0.id,p1_0.name,p1_0.price from product p1_0 where p1_0.id=?
+null
+
+Product Management Options:
+A. View Products
+B. Add Product
+C. Update Product
+D. Delete Product
+E. Search Product
+F. Exit
+Enter an option: E
+Enter product ID: P003
+Hibernate: select p1_0.id,p1_0.name,p1_0.price from product p1_0 where p1_0.id=?
+Product ID: P003, Name: Laptop, Price: 45000.0
+
+Product Management Options:
+A. View Products
+B. Add Product
+C. Update Product
+D. Delete Product
+E. Search Product
+F. Exit
+Enter an option: F
+Exiting...
+
+
+
+
+
+/////////////////////////////////////////////////////////
+============================================================
+
+FIRST ONE
+
+Product Management Options:
+A. View Products
+B. Add Product
+C. Update Product
+D. Delete Product
+E. Search Product
+F. Exit
+Enter an option: A
+Jun 12, 2025 5:32:55 PM org.hibernate.Version logVersion
+INFO: HHH000412: Hibernate ORM core version 6.6.16.Final
+Jun 12, 2025 5:32:55 PM org.hibernate.cache.internal.RegionFactoryInitiator initiateService
+INFO: HHH000026: Second-level cache disabled
+Jun 12, 2025 5:32:56 PM org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl configure
+WARN: HHH10001002: Using built-in connection pool (not intended for production use)
+Jun 12, 2025 5:32:56 PM org.hibernate.engine.jdbc.dialect.internal.DialectFactoryImpl constructDialect
+WARN: HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+Jun 12, 2025 5:32:56 PM org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator logConnectionInfo
+INFO: HHH10001005: Database info:
+	Database JDBC URL [jdbc:mysql://localhost:3306/productdb]
+	Database driver: com.mysql.cj.jdbc.Driver
+	Database version: 8.0.37
+	Autocommit mode: false
+	Isolation level: undefined/unknown
+	Minimum pool size: 1
+	Maximum pool size: 20
+Jun 12, 2025 5:32:57 PM org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator initiateService
+INFO: HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+Jun 12, 2025 5:32:57 PM org.hibernate.resource.transaction.backend.jdbc.internal.DdlTransactionIsolatorNonJtaImpl getIsolatedConnection
+INFO: HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@47187f50] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode.
+Hibernate: select p1_0.id,p1_0.name,p1_0.price from product p1_0
+Available Products:
+ID: P001, Name: Mobile, Price: 1000.0
+ID: P002, Name: Camera, Price: 999.0
+ID: P003, Name: Laptop, Price: 45000.0
+ID: P004, Name: TV, Price: 60000.0
+ID: P006, Name: Ipad, Price: 35000.0
+ID: P007, Name: Earphones, Price: 3000.0
+ID: P008, Name: Tablet, Price: 16000.0
+
+Product Management Options:
+A. View Products
+B. Add Product
+C. Update Product
+D. Delete Product
+E. Search Product
+F. Exit
+Enter an option: B
+Enter product id: P009
+Enter product name: Cellphone
+Enter product price: 2000
+Hibernate: insert into product (name,price,id) values (?,?,?)
+Product added successfully.
+Hibernate: select p1_0.id,p1_0.name,p1_0.price from product p1_0
+Available Products:
+ID: P001, Name: Mobile, Price: 1000.0
+ID: P002, Name: Camera, Price: 999.0
+ID: P003, Name: Laptop, Price: 45000.0
+ID: P004, Name: TV, Price: 60000.0
+ID: P006, Name: Ipad, Price: 35000.0
+ID: P007, Name: Earphones, Price: 3000.0
+ID: P008, Name: Tablet, Price: 16000.0
+ID: P009, Name: Cellphone, Price: 2000.0
+
+Product Management Options:
+A. View Products
+B. Add Product
+C. Update Product
+D. Delete Product
+E. Search Product
+F. Exit
+Enter an option: C
+Enter product ID: P007
+Enter new product name: Headphones
+Enter new product price: 3000
+Hibernate: select p1_0.id,p1_0.name,p1_0.price from product p1_0 where p1_0.id=?
+Hibernate: update product set name=?,price=? where id=?
+Product updated successfully.
+Hibernate: select p1_0.id,p1_0.name,p1_0.price from product p1_0
+Available Products:
+ID: P001, Name: Mobile, Price: 1000.0
+ID: P002, Name: Camera, Price: 999.0
+ID: P003, Name: Laptop, Price: 45000.0
+ID: P004, Name: TV, Price: 60000.0
+ID: P006, Name: Ipad, Price: 35000.0
+ID: P007, Name: Headphones, Price: 3000.0
+ID: P008, Name: Tablet, Price: 16000.0
+ID: P009, Name: Cellphone, Price: 2000.0
+
+Product Management Options:
+A. View Products
+B. Add Product
+C. Update Product
+D. Delete Product
+E. Search Product
+F. Exit
+Enter an option: D
+Enter product ID: P007
+Hibernate: select p1_0.id,p1_0.name,p1_0.price from product p1_0 where p1_0.id=?
+Hibernate: delete from product where id=?
+Product deleted successfully.
+
+Product Management Options:
+A. View Products
+B. Add Product
+C. Update Product
+D. Delete Product
+E. Search Product
+F. Exit
+Enter an option: E
+Enter product ID: P004
+Hibernate: select p1_0.id,p1_0.name,p1_0.price from product p1_0 where p1_0.id=?
+Product ID: P004, Name: TV, Price: 60000.0
+
+Product Management Options:
+A. View Products
+B. Add Product
+C. Update Product
+D. Delete Product
+E. Search Product
+F. Exit
+Enter an option: E
+Enter product ID: P007
+Hibernate: select p1_0.id,p1_0.name,p1_0.price from product p1_0 where p1_0.id=?
+null
+
+Product Management Options:
+A. View Products
+B. Add Product
+C. Update Product
+D. Delete Product
+E. Search Product
+F. Exit
+Enter an option: F
+Exiting...

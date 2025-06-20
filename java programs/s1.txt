@@ -1,0 +1,85 @@
+1. Create the Abstract Product POJO Class
+Since Product is abstract, it will have common properties that can be extended by its subclasses.
+
+java
+public abstract class Product {
+    private int productId;
+    private String productName;
+    private double price;
+
+    // Getters and Setters
+    public int getProductId() { return productId; }
+    public void setProductId(int productId) { this.productId = productId; }
+    
+    public String getProductName() { return productName; }
+    public void setProductName(String productName) { this.productName = productName; }
+    
+    public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; }
+}
+2. Create Subclasses Battery and Disc
+Each subclass extends Product and has its own unique properties.
+
+java
+public class Battery extends Product {
+    private int capacity;
+
+    public int getCapacity() { return capacity; }
+    public void setCapacity(int capacity) { this.capacity = capacity; }
+}
+java
+public class Disc extends Product {
+    private int size;
+
+    public int getSize() { return size; }
+    public void setSize(int size) { this.size = size; }
+}
+3. XML Configuration for Dependency Injection via Setter Methods
+Since Product is abstract, we won't instantiate it directly. Instead, we define beans for Battery and Disc:
+
+xml
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Battery Bean -->
+    <bean id="battery" class="com.example.Battery">
+        <property name="productId" value="101"/>
+        <property name="productName" value="Rechargeable Battery"/>
+        <property name="price" value="15.99"/>
+        <property name="capacity" value="5000"/>
+    </bean>
+
+    <!-- Disc Bean -->
+    <bean id="disc" class="com.example.Disc">
+        <property name="productId" value="102"/>
+        <property name="productName" value="DVD Disc"/>
+        <property name="price" value="5.99"/>
+        <property name="size" value="4"/>
+    </bean>
+
+</beans>
+4. Write a Main Method to Bootstrap Spring Core Container
+Now, we create the main method to load the Spring XML configuration and fetch the beans.
+
+java
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class ShoppingCartApp {
+    public static void main(String[] args) {
+        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+
+        Battery battery = context.getBean("battery", Battery.class);
+        Disc disc = context.getBean("disc", Disc.class);
+
+        System.out.println("Battery Details: " + battery.getProductName() + " - $" + battery.getPrice());
+        System.out.println("Disc Details: " + disc.getProductName() + " - $" + disc.getPrice());
+
+        System.out.println("Beans in container:");
+        for (String beanName : context.getBeanDefinitionNames()) {
+            System.out.println(beanName);
+        }
+    }
+}

@@ -1,0 +1,4 @@
+How to create a project in web
+
+>>file > new > dynamic wweb project > project name > file name
+  >

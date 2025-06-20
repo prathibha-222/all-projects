@@ -1,0 +1,391 @@
+1. Database Setup (MySQL)
+Create a database named railway_crossing and a table to store railway crossing details:
+
+sql
+CREATE DATABASE railway_crossing;
+
+USE railway_crossing;
+
+CREATE TABLE railway_crossings (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255),
+    address VARCHAR(255),
+    landmark VARCHAR(255),
+    train_schedule TEXT,
+    in_charge VARCHAR(255),
+    status ENUM('Open', 'Closed')
+);
+
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255),
+    email VARCHAR(255) UNIQUE,
+    password VARCHAR(255)
+);
+
+CREATE TABLE favorites (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    crossing_id INT,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (crossing_id) REFERENCES railway_crossings(id)
+);
+
+
+
+2. Backend: Servlet Implementation
+User Registration Servlet (RegisterServlet.java)
+Handles user registration:
+
+java
+@WebServlet("/register")
+public class RegisterServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String name = request.getParameter("name");
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+
+        try {
+            Connection con = DatabaseConnection.initializeDatabase();
+            PreparedStatement ps = con.prepareStatement("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
+            ps.setString(1, name);
+            ps.setString(2, email);
+            ps.setString(3, password);
+            ps.executeUpdate();
+            con.close();
+            response.sendRedirect("login.jsp");
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().println("Registration failed.");
+        }
+    }
+}
+Login Servlet (LoginServlet.java)
+Handles user login:
+
+java
+@WebServlet("/login")
+public class LoginServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+
+        try {
+            Connection con = DatabaseConnection.initializeDatabase();
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM users WHERE email = ? AND password = ?");
+            ps.setString(1, email);
+            ps.setString(2, password);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                HttpSession session = request.getSession();
+                session.setAttribute("user_id", rs.getInt("id"));
+                response.sendRedirect("home.jsp");
+            } else {
+                response.getWriter().println("Invalid Credentials.");
+            }
+            con.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+Add Railway Crossing Servlet (AddCrossingServlet.java)
+Allows the admin to add crossings:
+
+java
+@WebServlet("/addCrossing")
+public class AddCrossingServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String name = request.getParameter("name");
+        String address = request.getParameter("address");
+        String landmark = request.getParameter("landmark");
+        String trainSchedule = request.getParameter("trainSchedule");
+        String inCharge = request.getParameter("inCharge");
+        String status = request.getParameter("status");
+
+        try {
+            Connection con = DatabaseConnection.initializeDatabase();
+            PreparedStatement ps = con.prepareStatement("INSERT INTO railway_crossings (name, address, landmark, train_schedule, in_charge, status) VALUES (?, ?, ?, ?, ?, ?)");
+            ps.setString(1, name);
+            ps.setString(2, address);
+            ps.setString(3, landmark);
+            ps.setString(4, trainSchedule);
+            ps.setString(5, inCharge);
+            ps.setString(6, status);
+            ps.executeUpdate();
+            con.close();
+            response.sendRedirect("adminDashboard.jsp");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+3. Frontend: JSP Implementation
+User Registration Page (register.jsp)
+Allows users to register:
+
+jsp
+<form action="register" method="post">
+    Name: <input type="text" name="name" required /><br>
+    Email: <input type="email" name="email" required /><br>
+    Password: <input type="password" name="password" required /><br>
+    <input type="submit" value="Register">
+</form>
+Login Page (login.jsp)
+Handles user authentication:
+
+jsp
+<form action="login" method="post">
+    Email: <input type="email" name="email" required /><br>
+    Password: <input type="password" name="password" required /><br>
+    <input type="submit" value="Login">
+</form>
+Display Railway Crossings (home.jsp)
+Displays available railway crossings:
+
+jsp
+<%@ page import="java.sql.*, java.util.*" %>
+<%
+    Connection con = DatabaseConnection.initializeDatabase();
+    Statement stmt = con.createStatement();
+    ResultSet rs = stmt.executeQuery("SELECT * FROM railway_crossings");
+    while (rs.next()) {
+%>
+        <p><b><%= rs.getString("name") %></b> - <%= rs.getString("status") %> </p>
+<%
+    }
+    con.close();
+%>
+Admin Dashboard (adminDashboard.jsp)
+Enables admin to add a new railway crossing:
+
+jsp
+<form action="addCrossing" method="post">
+    Name: <input type="text" name="name" required /><br>
+    Address: <input type="text" name="address" required /><br>
+    Landmark: <input type="text" name="landmark" required /><br>
+    Train Schedule: <input type="text" name="trainSchedule" required /><br>
+    Person in Charge: <input type="text" name="inCharge" required /><br>
+    Status: <select name="status">
+        <option>Open</option>
+        <option>Closed</option>
+    </select><br>
+    <input type="submit" value="Add Crossing">
+</form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+========================
+
+
+
+1. Database Connection Utility (DatabaseConnection.java)
+This utility class initializes the database connection.
+
+java
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class DatabaseConnection {
+    public static Connection initializeDatabase() throws SQLException, ClassNotFoundException {
+        String url = "jdbc:mysql://localhost:3306/railway_crossing"; // Database URL
+        String user = "root"; // Database username
+        String password = "password"; // Database password
+
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        return DriverManager.getConnection(url, user, password);
+    }
+}
+2. User Registration Servlet (RegisterServlet.java)
+Handles user registration.
+
+java
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/register")
+public class RegisterServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String name = request.getParameter("name");
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+
+        try {
+            Connection con = DatabaseConnection.initializeDatabase();
+            PreparedStatement ps = con.prepareStatement("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
+            ps.setString(1, name);
+            ps.setString(2, email);
+            ps.setString(3, password);
+            ps.executeUpdate();
+            con.close();
+            response.sendRedirect("login.jsp");
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().println("Registration failed.");
+        }
+    }
+}
+3. Login Servlet (LoginServlet.java)
+Handles user login authentication.
+
+java
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+@WebServlet("/login")
+public class LoginServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+
+        try {
+            Connection con = DatabaseConnection.initializeDatabase();
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM users WHERE email = ? AND password = ?");
+            ps.setString(1, email);
+            ps.setString(2, password);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                HttpSession session = request.getSession();
+                session.setAttribute("user_id", rs.getInt("id"));
+                response.sendRedirect("home.jsp");
+            } else {
+                response.getWriter().println("Invalid Credentials.");
+            }
+            con.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+4. Add Railway Crossing Servlet (AddCrossingServlet.java)
+Allows the admin to add railway crossings.
+
+java
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/addCrossing")
+public class AddCrossingServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String name = request.getParameter("name");
+        String address = request.getParameter("address");
+        String landmark = request.getParameter("landmark");
+        String trainSchedule = request.getParameter("trainSchedule");
+        String inCharge = request.getParameter("inCharge");
+        String status = request.getParameter("status");
+
+        try {
+            Connection con = DatabaseConnection.initializeDatabase();
+            PreparedStatement ps = con.prepareStatement("INSERT INTO railway_crossings (name, address, landmark, train_schedule, in_charge, status) VALUES (?, ?, ?, ?, ?, ?)");
+            ps.setString(1, name);
+            ps.setString(2, address);
+            ps.setString(3, landmark);
+            ps.setString(4, trainSchedule);
+            ps.setString(5, inCharge);
+            ps.setString(6, status);
+            ps.executeUpdate();
+            con.close();
+            response.sendRedirect("adminDashboard.jsp");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+5. Display Railway Crossings (home.jsp)
+Displays available railway crossings.
+
+jsp
+<%@ page import="java.sql.*" %>
+<%
+    Connection con = DatabaseConnection.initializeDatabase();
+    Statement stmt = con.createStatement();
+    ResultSet rs = stmt.executeQuery("SELECT * FROM railway_crossings");
+    while (rs.next()) {
+%>
+    <p><b><%= rs.getString("name") %></b> - <%= rs.getString("status") %> </p>
+<%
+    }
+    con.close();
+%>
+6. User Registration Page (register.jsp)
+Allows users to register.
+
+jsp
+<form action="register" method="post">
+    Name: <input type="text" name="name" required /><br>
+    Email: <input type="email" name="email" required /><br>
+    Password: <input type="password" name="password" required /><br>
+    <input type="submit" value="Register">
+</form>
+7. Login Page (login.jsp)
+Handles user authentication.
+
+jsp
+<form action="login" method="post">
+    Email: <input type="email" name="email" required /><br>
+    Password: <input type="password" name="password" required /><br>
+    <input type="submit" value="Login">
+</form>
+8. Admin Dashboard (adminDashboard.jsp)
+Enables admins to add new railway crossings.
+
+jsp
+<form action="addCrossing" method="post">
+    Name: <input type="text" name="name" required /><br>
+    Address: <input type="text" name="address" required /><br>
+    Landmark: <input type="text" name="landmark" required /><br>
+    Train Schedule: <input type="text" name="trainSchedule" required /><br>
+    Person in Charge: <input type="text" name="inCharge" required /><br>
+    Status: <select name="status">
+        <option>Open</option>
+        <option>Closed</option>
+    </select><br>
+    <input type="submit" value="Add Crossing">
+</form>
